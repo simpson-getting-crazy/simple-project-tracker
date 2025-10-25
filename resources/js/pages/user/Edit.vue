@@ -6,6 +6,20 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Form } from '@inertiajs/vue3';
 import { Input } from '@/components/ui/input';
 import Button from '@/components/ui/button/Button.vue';
+import { reactive } from 'vue';
+import InputError from '@/components/InputError.vue';
+
+const props = defineProps({
+    user: Object,
+});
+
+const form = reactive({
+    name: props.user.name,
+    email: props.user.email,
+    old_password: '',
+    new_password: '',
+    new_password_confirmation: '',
+});
 
 const breadcrumbItems = [
     {
@@ -13,7 +27,7 @@ const breadcrumbItems = [
         href: '/user',
     },
     {
-        title: 'Create User',
+        title: 'Edit User',
     }
 ];
 
@@ -22,9 +36,9 @@ const breadcrumbItems = [
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
         <div class="px-4 py-6">
-            <Heading title="Create User Setting" description="Create users and account settings" />
+            <Heading title="Edit User Setting" description="Edit users and account settings" />
 
-            <Form v-bind="UserController.store.form()" class="space-y-6"
+            <Form v-bind="UserController.update.form(user.id)" class="space-y-6"
                 v-slot="{ errors, processing, recentlySuccessful }">
                 <div class="grid grid-cols-6 gap-6">
                     <div class="col-span-6 sm:col-span-3">
@@ -35,7 +49,7 @@ const breadcrumbItems = [
                             </sup>
                         </Label>
                         <Input id="name" class="mt-1 block w-full" name="name" autocomplete="name"
-                            placeholder="Full name" required />
+                            placeholder="Full name" v-model="form.name" required />
                         <InputError class="mt-2" :message="errors.name" />
                     </div>
                     <div class="col-span-6 sm:col-span-3">
@@ -46,31 +60,36 @@ const breadcrumbItems = [
                             </sup>
                         </Label>
                         <Input type="email" id="email" class="mt-1 block w-full" name="email" autocomplete="email"
-                            placeholder="Email address" required />
+                            placeholder="Email address" v-model="form.email" required />
                         <InputError class="mt-2" :message="errors.email" />
                     </div>
-                    <div class="col-span-6 sm:col-span-3">
+                </div>
+
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-4 w-full">
                         <Label for="name">
-                            Password
-                            <sup class="text-rose-600">
-                                *
-                            </sup>
+                            Old Password
                         </Label>
-                        <Input type="password" id="password" class="mt-1 block w-full" name="password"
-                            autocomplete="password" placeholder="Password" required />
-                        <InputError class="mt-2" :message="errors.password" />
+                        <Input type="password" id="old_password" class="mt-1 block w-full" name="old_password"
+                            autocomplete="old_password" placeholder="Old Password" />
+                        <InputError class="mt-2" :message="errors.old_password" />
                     </div>
-                    <div class="col-span-6 sm:col-span-3">
+                    <div class="col-span-4 w-full">
                         <Label for="name">
-                            Password Confirmation
-                            <sup class="text-rose-600">
-                                *
-                            </sup>
+                            New Password
                         </Label>
-                        <Input type="password" id="password_confirmation" class="mt-1 block w-full"
-                            name="password_confirmation" autocomplete="password_confirmation"
-                            placeholder="Password Confirmation" required />
-                        <InputError class="mt-2" :message="errors.password_confirmation" />
+                        <Input type="password" id="new_password" class="mt-1 block w-full" name="new_password"
+                            autocomplete="new_password" placeholder="New Password" />
+                        <InputError class="mt-2" :message="errors.new_password" />
+                    </div>
+                    <div class="col-span-4 w-full">
+                        <Label for="name">
+                            New Password Confirmation
+                        </Label>
+                        <Input type="password" id="new_password_confirmation" class="mt-1 block w-full"
+                            name="new_password_confirmation" autocomplete="new_password_confirmation"
+                            placeholder="New Password Confirmation" />
+                        <InputError class="mt-2" :message="errors.new_password_confirmation" />
                     </div>
                 </div>
 

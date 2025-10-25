@@ -6,6 +6,7 @@ import Button from '@/components/ui/button/Button.vue';
 import { router } from '@inertiajs/vue3';
 import { toast } from "vue-sonner"
 import { PlusCircle } from 'lucide-vue-next';
+import DeleteConfirmation from '@/components/DeleteConfirmation.vue';
 import {
     Table,
     TableBody,
@@ -15,17 +16,15 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
+import { User } from "lucide-vue-next"
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+    Empty,
+    EmptyContent,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from "@/components/ui/empty"
 
 const props = defineProps({
     users: Object,
@@ -66,59 +65,68 @@ const deleteRecord = (id) => {
                         <TableHead class="w-[100px]">
                             #
                         </TableHead>
-                        <TableHead>
+                        <TableHead class="text-center">
                             Name
                         </TableHead>
-                        <TableHead>
+                        <TableHead class="text-center">
                             Email address
                         </TableHead>
-                        <TableHead class="text-right">
+                        <TableHead class="text-center">
                             Role
                         </TableHead>
-                        <TableHead>
+                        <TableHead class="text-center">
                             Actions
                         </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <TableRow v-for="user, key in users" :key="user.id">
+                    <TableRow v-for="user, key in users" :key="user.id" v-if="Object.keys(users).length > 0">
                         <TableCell class="font-medium">
                             {{ key + 1 }}
                         </TableCell>
-                        <TableCell>
+                        <TableCell class="text-center">
                             {{ user.name }}
                         </TableCell>
-                        <TableCell>
+                        <TableCell class="text-center">
                             {{ user.email }}
                         </TableCell>
-                        <TableCell class="text-right">
+                        <TableCell class="text-center">
                             {{ user.role }}
                         </TableCell>
                         <TableCell>
-                            <div class="flex gap-2">
-                                <Button style="cursor: pointer;" @click="$inertia.visit(`/user/${user.id}`)">
+                            <div class="flex gap-2 justify-center">
+                                <Button style="cursor: pointer;" @click="$inertia.visit(`/user/${user.id}/edit`)">
                                     Edit
                                 </Button>
-                                <AlertDialog>
-                                    <AlertDialogTrigger as-child>
-                                        <Button variant="destructive">Delete</Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                This action cannot be undone. This will permanently delete your
-                                                account and remove your data from our servers.
-                                            </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                            <AlertDialogAction @click="deleteRecord(user.id)">Confirm Deletion
-                                            </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                                <DeleteConfirmation
+                                    :text="`Are you sure you want to delete ${user.name}? This action cannot be undone.`"
+                                    :actions="() => deleteRecord(user.id)" />
                             </div>
+                        </TableCell>
+                    </TableRow>
+                    <TableRow v-else>
+                        <TableCell colspan="5">
+                            <Empty class="border border-dashed">
+                                <EmptyHeader>
+                                    <EmptyMedia variant="icon">
+                                        <User />
+                                    </EmptyMedia>
+                                    <EmptyTitle>Users Data is Empty</EmptyTitle>
+                                    <EmptyDescription>
+                                        Get started by creating a new user.
+                                    </EmptyDescription>
+                                </EmptyHeader>
+                                <EmptyContent>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        style="cursor: pointer;"
+                                        @click="$inertia.visit('/user/create')"
+                                    >
+                                        Create User
+                                    </Button>
+                                </EmptyContent>
+                            </Empty>
                         </TableCell>
                     </TableRow>
                 </TableBody>
